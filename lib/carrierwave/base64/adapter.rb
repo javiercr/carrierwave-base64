@@ -10,8 +10,14 @@ module Carrierwave
           return super(data) unless data.is_a?(String) &&
                                     data.strip.start_with?('data')
 
+          filename = if options[:file_name].respond_to?(:call)
+            options[:file_name].call(self)
+          else
+            options[:file_name]
+          end.to_s
+
           super(Carrierwave::Base64::Base64StringIO.new(
-            data.strip, options[:file_name] || 'file'
+            data.strip, filename || 'file'
           ))
         end
       end
